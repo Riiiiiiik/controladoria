@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Controladoria System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+        
+        /* Force Apple system font stack generally, fall back to Inter */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+        
+        /* Custom blur for backdrop support */
+        .backdrop-blur-md {
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        apple: {
+                            blue: '#0071e3',
+                            'blue-hover': '#0077ed',
+                            gray: '#f5f5f7',
+                        }
+                    },
+                    boxShadow: {
+                        'apple': '0 8px 30px rgb(0 0 0 / 4%)',
+                        'apple-hover': '0 20px 40px rgb(0 0 0 / 8%)',
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', 'SF Pro Text', 'Segoe UI', 'Roboto', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen flex items-center justify-center bg-[#F5F5F7] p-6 text-slate-900 selection:bg-blue-100 selection:text-blue-700">
+
+    <!-- Decorative background elements for "Airy" feel -->
+    <div class="fixed inset-0 pointer-events-none overflow-hidden">
+        <div class="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-blue-50/60 blur-[120px] rounded-full mix-blend-multiply"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-indigo-50/60 blur-[120px] rounded-full mix-blend-multiply"></div>
+    </div>
+
+    <div class="w-full max-w-[360px] relative z-10 flex flex-col items-center">
+        
+        <!-- Header -->
+        <div class="flex flex-col items-center mb-10 text-center">
+            <div class="w-[60px] h-[60px] bg-[#0071e3] rounded-[18px] flex items-center justify-center shadow-lg shadow-blue-500/20 mb-6 transition-transform hover:scale-105 duration-500">
+                <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04M12 21.355r1.424-4.885A2.333 2.333 0 0012 14c-1.288 0-2.333 1.045-2.333 2.333l1.424 4.885z"></path>
+                </svg>
+            </div>
+            <h1 class="text-[28px] font-semibold tracking-tight text-gray-900 mb-2">Login</h1>
+            <p class="text-[15px] text-gray-500 font-normal leading-relaxed">
+                Entre com suas credenciais para acessar.
+            </p>
+        </div>
+
+        <!-- Card -->
+        <div class="w-full bg-white/80 backdrop-blur-md rounded-[20px] shadow-apple p-1 pb-1">
+            <div class="p-8 pb-6">
+                <form action="#" method="POST" class="space-y-5">
+                    
+                    <!-- Email Field -->
+                    <div class="space-y-2">
+                        <label for="email" class="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider pl-1">
+                            E-mail
+                        </label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            value="santosrik75@gmail.com"
+                            class="w-full h-12 px-4 rounded-xl bg-gray-100/50 text-gray-900 text-[15px] placeholder-gray-400 border-0 ring-0 focus:ring-2 focus:ring-[#0071e3] transition-all duration-200 ease-out outline-none"
+                            placeholder="nome@exemplo.com"
+                        >
+                    </div>
+
+                    <!-- Password Field -->
+                    <div class="space-y-2">
+                        <label for="password" class="block text-[11px] font-semibold text-gray-500 uppercase tracking-wider pl-1">
+                            Senha
+                        </label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password"
+                            value="........"
+                            class="w-full h-12 px-4 rounded-xl bg-gray-100/50 text-gray-900 text-[15px] placeholder-gray-400 border-0 ring-0 focus:ring-2 focus:ring-[#0071e3] transition-all duration-200 ease-out outline-none"
+                            placeholder="Sua senha"
+                        >
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button 
+                        type="submit" 
+                        class="w-full h-[48px] mt-6 bg-[#0071e3] hover:bg-[#0077ed] text-white text-[15px] font-semibold rounded-[18px] transition-all duration-200 shadow-sm hover:shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0071e3] flex items-center justify-center active:scale-[0.98]"
+                    >
+                        Entrar
+                    </button>
+                </form>
+            </div>
+            
+            <!-- Footer Link -->
+            <div class="px-8 py-5 border-t border-gray-100/60 text-center">
+                <a href="#" class="text-[13px] font-medium text-[#0071e3] hover:text-[#0077ed] transition-colors">
+                    Esqueceu a senha?
+                </a>
+            </div>
+        </div>
+
+        <!-- Copyright -->
+        <p class="mt-8 text-[11px] font-medium text-gray-400 uppercase tracking-widest text-center">
+            © 2025 Controladoria System
+        </p>
+
+    </div>
+
+</body>
+</html>
