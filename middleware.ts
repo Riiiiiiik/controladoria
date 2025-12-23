@@ -9,9 +9,26 @@ export async function middleware(request: NextRequest) {
     })
 
     // Create client
+    const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+    if (!supabaseUrl || !supabaseKey) {
+        return new NextResponse(
+            JSON.stringify({
+                error: 'Configuration Error',
+                message: 'Missing Supabase Environment Variables!',
+                details: {
+                    hasUrl: !!supabaseUrl,
+                    hasKey: !!supabaseKey
+                }
+            }),
+            { status: 500, headers: { 'content-type': 'application/json' } }
+        )
+    }
+
     const supabase = createServerClient(
-        process.env.NEXT_PUBLIC_SUPABASE_URL!,
-        process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+        supabaseUrl,
+        supabaseKey,
         {
             cookies: {
                 getAll() {
