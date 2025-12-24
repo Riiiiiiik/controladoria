@@ -8,14 +8,24 @@ import { Check, X, Edit2, Trash2, Loader2 } from 'lucide-react'
 
 interface RegistroActionsProps {
     registro: any
+    userRole: string
 }
 
-export default function RegistroActions({ registro }: RegistroActionsProps) {
+export default function RegistroActions({ registro, userRole }: RegistroActionsProps) {
     const router = useRouter()
     const supabase = createClient()
     const [loading, setLoading] = useState(false)
     const [isDeleting, setIsDeleting] = useState(false)
     const [showConfirm, setShowConfirm] = useState(false)
+
+    // VIEWER: No actions allowed
+    if (userRole === 'viewer') {
+        return (
+            <div className="flex items-center justify-center text-xs text-gray-400">
+                Somente leitura
+            </div>
+        )
+    }
 
     const handleUpdateStatus = async (status: string) => {
         setLoading(true)

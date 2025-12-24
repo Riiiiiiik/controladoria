@@ -190,17 +190,13 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
                         <span className="flex items-center gap-2">
                             <Plus className="h-4 w-4" />
                             Nova Notificação
-                        </span>
-                    </Link>
-                </div>
-            </div>
-            <RegistrosTable
-                registros={registros || []}
-                userRole={userRole}
-                availableYears={availableYears}
-                selectedYear={yearToFetch}
-            />
-        </div>
-    )
+                            <RegistrosClient
+                                userRole={userRole}
+                                availableYears={availableYears}
+                                selectedYear={selectedYear}
+                                registros={registros}
+                                userName={userName}
+                            />
+                            )
 }
-
+                            ```

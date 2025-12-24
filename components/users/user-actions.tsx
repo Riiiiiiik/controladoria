@@ -158,6 +158,16 @@ export default function UserActions({ userId, userEmail, currentRole }: UserActi
                                         Administrador
                                         {newRole === 'admin' && <div className="w-2 h-2 rounded-full bg-[#0071e3]"></div>}
                                     </button>
+                                    <button
+                                        type="button"
+                                        onClick={() => setNewRole('viewer')}
+                                        className={`px-4 py-3 rounded-xl border text-sm font-semibold transition-all flex items-center justify-between ${newRole === 'viewer'
+                                            ? 'bg-green-50 border-green-600 text-green-600 ring-1 ring-green-600'
+                                            : 'bg-white border-gray-200 text-gray-600 hover:border-gray-300'}`}
+                                    >
+                                        Visualizador
+                                        {newRole === 'viewer' && <div className="w-2 h-2 rounded-full bg-green-600"></div>}
+                                    </button>
                                 </div>
                             </div>
 

@@ -117,6 +117,10 @@ export default async function UsersPage() {
                                             <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-blue-50 text-blue-700 border border-blue-100 uppercase tracking-wide">
                                                 Administrador
                                             </span>
+                                        ) : profileMap.get(user.id) === 'viewer' ? (
+                                            <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-green-50 text-green-700 border border-green-100 uppercase tracking-wide">
+                                                Visualizador
+                                            </span>
                                         ) : (
                                             <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-bold bg-gray-100 text-gray-500 border border-gray-200 uppercase tracking-wide">
                                                 Controlador
