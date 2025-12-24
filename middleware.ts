@@ -2,7 +2,12 @@ import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
-    console.log("Middleware: Invoked for path:", request.nextUrl.pathname);
+    // console.log("Middleware: Invoked for path:", request.nextUrl.pathname);
+
+    // TEMPORARY: Pass-through everything to isolate crash
+    return NextResponse.next();
+
+    /*
     try {
         let response = NextResponse.next({
             request: {
@@ -65,7 +70,7 @@ export async function middleware(request: NextRequest) {
         if (userError) {
             console.log("Middleware Auth Check Error (might be just no session):", userError.message)
         } else {
-            console.log("Middleware: User found:", !!user);
+             console.log("Middleware: User found:", !!user);
         }
 
         // Protected routes logic
@@ -75,7 +80,7 @@ export async function middleware(request: NextRequest) {
         }
 
         if (user && (request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/')) {
-            console.log("Middleware: Redirecting to Dashboard");
+             console.log("Middleware: Redirecting to Dashboard");
             return NextResponse.redirect(new URL('/dashboard', request.url))
         }
 
@@ -92,6 +97,7 @@ export async function middleware(request: NextRequest) {
             { status: 500, headers: { 'content-type': 'application/json' } }
         )
     }
+    */
 }
 
 export const config = {
