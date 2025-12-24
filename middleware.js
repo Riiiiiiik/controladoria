@@ -5,5 +5,5 @@ export function middleware(request) {
 }
 
 export const config = {
-    matcher: [], // Test: Match nothing
+    matcher: ['/verificacao-middleware-teste'], // Valid route to pass build validation
 }
