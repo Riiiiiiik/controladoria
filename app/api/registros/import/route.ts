@@ -31,6 +31,26 @@ function parseDate(dateStr: any): string | null {
 }
 
 export async function DELETE(request: Request) {
+    // SECURITY: Verify authentication
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+
+    if (!user) {
+        return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    // SECURITY: Verify admin role
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+
+    if (profile?.role !== 'admin') {
+        return NextResponse.json({ error: 'Forbidden - Admin access required' }, { status: 403 })
+    }
+
+    // Now safe to delete - user is authenticated admin
     const supabaseAdmin = createAdminClient()
 
     // Safety check: ensure only admins can do this, or just rely on dev context?

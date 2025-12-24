@@ -4,6 +4,7 @@ import RegistrosTable from '@/components/registros/registros-table'
 import AdminUserSelector from '@/components/dashboard/admin-user-selector'
 import Link from 'next/link'
 import { Plus, ArrowLeft } from 'lucide-react'
+import { redirect } from 'next/navigation'
 
 interface DashboardPageProps {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>
@@ -47,8 +48,17 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
         return <AdminUserSelector users={sortedUsers} />
     }
 
-    // --- DATA FETCHING (Common for Admin viewing user and Controller) ---
-    const currentUserId = userRole === 'admin' ? targetUserId : user?.id
+    // --- SECURITY: IDOR Protection ---
+    // If targetUserId is provided, verify user is actually admin
+    let currentUserId = user?.id
+
+    if (targetUserId) {
+        if (userRole !== 'admin') {
+            // Controller trying to access other user's data - redirect to own dashboard
+            redirect('/dashboard')
+        }
+        currentUserId = targetUserId
+    }
 
     if (!currentUserId) {
         return <div className="p-4 text-red-500">Usuário não identificado.</div>
