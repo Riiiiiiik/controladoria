@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import Sidebar from '@/components/layout/sidebar'
+import DashboardLayoutClient from '@/components/dashboard/dashboard-layout-client'
 
 export default async function DashboardLayout({
     children,
@@ -15,7 +15,7 @@ export default async function DashboardLayout({
         redirect('/login')
     }
 
-    // Fetch user role for sidebar
+    // Fetch user role for layout
     const { data: profile } = await supabase
         .from('profiles')
         .select('role')
@@ -25,11 +25,8 @@ export default async function DashboardLayout({
     const userRole = profile?.role || 'controller'
 
     return (
-        <div className="min-h-screen bg-[#F5F5F7] flex">
-            <Sidebar userRole={userRole} />
-            <main className="flex-1 p-8">
-                {children}
-            </main>
-        </div>
+        <DashboardLayoutClient user={user} userRole={userRole}>
+            {children}
+        </DashboardLayoutClient>
     )
 }
