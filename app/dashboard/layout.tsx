@@ -1,6 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
-import DashboardLayoutClient from '@/components/dashboard/dashboard-layout-client'
+import Sidebar from '@/components/layout/sidebar'
 
 export default async function DashboardLayout({
     children,
@@ -8,33 +8,28 @@ export default async function DashboardLayout({
     children: React.ReactNode
 }) {
     const supabase = await createClient()
-    let { data: { user } } = await supabase.auth.getUser()
+    const { data: { user } } = await supabase.auth.getUser()
 
-    let userRole = 'admin' // Default to admin for demo
-
+    // SECURITY: Global authentication check for all dashboard routes
     if (!user) {
-        // Mock user for bypass
-        user = {
-            id: 'mock-id',
-            email: 'demo_audax@example.com',
-            app_metadata: {},
-            user_metadata: {},
-            aud: 'authenticated',
-            created_at: new Date().toISOString()
-        } as any
-    } else {
-        // Fetch profile to get role
-        const { data: profile } = await supabase
-            .from('profiles')
-            .select('role')
-            .eq('id', user.id)
-            .single()
-        if (profile?.role) userRole = profile.role
+        redirect('/login')
     }
 
+    // Fetch user role for sidebar
+    const { data: profile } = await supabase
+        .from('profiles')
+        .select('role')
+        .eq('id', user.id)
+        .single()
+
+    const userRole = profile?.role || 'controller'
+
     return (
-        <DashboardLayoutClient user={user} userRole={userRole}>
-            {children}
-        </DashboardLayoutClient>
+        <div className="min-h-screen bg-[#F5F5F7] flex">
+            <Sidebar userRole={userRole} />
+            <main className="flex-1 p-8">
+                {children}
+            </main>
+        </div>
     )
 }

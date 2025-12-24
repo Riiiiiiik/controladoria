@@ -16,6 +16,11 @@ export default async function DashboardPage({ searchParams }: DashboardPageProps
 
     const { data: { user } } = await supabase.auth.getUser()
 
+    // SECURITY: Redirect to login if not authenticated
+    if (!user) {
+        redirect('/login')
+    }
+
     // Fetch user role
     let userRole = 'controller'
     if (user) {
