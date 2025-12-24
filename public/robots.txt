@@ -1,0 +1,7 @@
+User-agent: *
+Disallow: /dashboard/
+Disallow: /api/
+Allow: /login
+Allow: /$
+
+Sitemap: https://controladoria-gamma.vercel.app/sitemap.xml
