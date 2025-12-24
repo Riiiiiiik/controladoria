@@ -2,6 +2,7 @@
 
 import { useState, useMemo, useRef, useEffect } from 'react'
 import Link from 'next/link'
+import { useSearchParams } from 'next/navigation'
 import EditableObservation from './editable-observation'
 import RegistroSidePanel from './registro-side-panel'
 import { Calendar, Edit2, Download, Search } from 'lucide-react'
@@ -17,6 +18,9 @@ interface RegistrosTableProps {
 }
 
 export default function RegistrosTable({ registros, userRole = 'controller', availableYears, selectedYear }: RegistrosTableProps) {
+    const searchParams = useSearchParams()
+    const currentUserId = searchParams.get('userId')
+
     // Pre-process records to avoid expensive logic inside the map
     const processedRegistros = useMemo(() => {
         return registros.map(registro => {
@@ -242,10 +246,11 @@ export default function RegistrosTable({ registros, userRole = 'controller', ava
                 <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-hide w-full sm:w-auto">
                     {availableYears.map((year) => {
                         const isActive = selectedYear === year
+                        const href = currentUserId ? `?userId=${currentUserId}&year=${year}` : `?year=${year}`
                         return (
                             <Link
                                 key={year}
-                                href={`?year=${year}`}
+                                href={href}
                                 className={`
                                     relative flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium transition-all duration-300
                                     ${isActive
