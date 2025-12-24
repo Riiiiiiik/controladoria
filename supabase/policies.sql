@@ -65,37 +65,22 @@ USING (
 );
 
 -- ============================================
--- 3. PROFILES TABLE POLICIES
+-- 3. PROFILES TABLE POLICIES (FIXED - No Recursion)
 -- ============================================
 
--- SELECT: Users can view own profile OR admins can view all
-CREATE POLICY "profiles_select_own_or_admin" 
+-- SELECT: Users can view own profile (admins handled in app code)
+CREATE POLICY "profiles_select_own" 
 ON profiles FOR SELECT
-USING (
-  auth.uid() = id OR
-  EXISTS (
-    SELECT 1 FROM profiles 
-    WHERE id = auth.uid() 
-    AND role = 'admin'
-  )
-);
+USING (auth.uid() = id);
 
--- UPDATE: Users can only update their own profile (except role)
+-- UPDATE: Users can only update their own profile
 CREATE POLICY "profiles_update_own" 
 ON profiles FOR UPDATE
 USING (auth.uid() = id)
 WITH CHECK (auth.uid() = id);
 
--- INSERT: Only admins can create profiles (via triggers usually)
-CREATE POLICY "profiles_insert_admin_only" 
-ON profiles FOR INSERT
-WITH CHECK (
-  EXISTS (
-    SELECT 1 FROM profiles 
-    WHERE id = auth.uid() 
-    AND role = 'admin'
-  )
-);
+-- INSERT: Block by default (created via triggers/admin only)
+-- DELETE: Block by default (admin only via application)
 
 -- ============================================
 -- 4. AUDIT LOGS TABLE (OPTIONAL)
