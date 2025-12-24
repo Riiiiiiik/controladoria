@@ -16,6 +16,8 @@ export default function HistoryImportPage() {
     const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
     const [message, setMessage] = useState('')
     const [showResetConfirm, setShowResetConfirm] = useState(false)
+    const [showClearMineConfirm, setShowClearMineConfirm] = useState(false)
+    const [userRole, setUserRole] = useState<string>('controller')
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -95,6 +97,46 @@ export default function HistoryImportPage() {
         }
     }
 
+    // Fetch user role on mount
+    useEffect(() => {
+        async function fetchRole() {
+            try {
+                const response = await fetch('/api/user/role')
+                if (response.ok) {
+                    const data = await response.json()
+                    setUserRole(data.role || 'controller')
+                }
+            } catch (err) {
+                console.error('Failed to fetch user role')
+            }
+        }
+        fetchRole()
+    }, [])
+
+    const handleClearMyData = async () => {
+        setIsLoading(true)
+        try {
+            const response = await fetch('/api/registros/clear-mine', {
+                method: 'DELETE',
+            })
+
+            if (response.ok) {
+                setStatus('success')
+                const data = await response.json()
+                setMessage(data.message || 'Seus dados foram limpos com sucesso!')
+                setPreviewData([])
+                setFile(null)
+                router.refresh()
+            } else {
+                setStatus('error')
+                setMessage('Erro ao limpar seus dados.')
+            }
+        } finally {
+            setIsLoading(false)
+            setShowClearMineConfirm(false)
+        }
+    }
+
     const handleImport = async () => {
         if (!file) return
 
@@ -164,6 +206,29 @@ export default function HistoryImportPage() {
         }
     }
 
+    const handleReset = async () => {
+        setIsLoading(true);
+        try {
+            const res = await fetch('/api/registros/import', { method: 'DELETE' });
+            if (res.ok) {
+                setStatus('success');
+                setMessage('Banco de dados limpo com sucesso!');
+                setPreviewData([]);
+                setFile(null);
+                router.refresh();
+            } else {
+                setStatus('error');
+                setMessage('Erro ao limpar o banco de dados.');
+            }
+        } catch (error) {
+            setStatus('error');
+            setMessage('Erro de rede ao limpar o banco de dados.');
+        } finally {
+            setIsLoading(false);
+            setShowResetConfirm(false);
+        }
+    };
+
     return (
         <div className="max-w-5xl w-full mx-auto space-y-8 pb-10">
             <header className="space-y-1">
@@ -183,14 +248,25 @@ export default function HistoryImportPage() {
                             ))}
                         </div>
                     </div>
-                    <button
-                        onClick={() => setShowResetConfirm(true)}
-                        className="group flex items-center gap-2 px-4 py-2 rounded-full border border-red-100 bg-white text-red-600 text-[11px] font-semibold tracking-wide shadow-sm hover:bg-red-50 hover:border-red-200 transition-all duration-200 active:scale-95"
-                        title="Resetar Banco de Dados"
-                    >
-                        <Trash2 className="w-3.5 h-3.5 transition-transform group-hover:scale-110" />
-                        RESETAR BANCO
-                    </button>
+                    {userRole === 'admin' ? (
+                        <button
+                            onClick={() => setShowResetConfirm(true)}
+                            className="group flex items-center gap-2 px-4 py-2 rounded-full border border-red-100 bg-white text-red-600 text-[11px] font-semibold tracking-wide shadow-sm hover:bg-red-50 hover:border-red-200 transition-all duration-200 active:scale-95"
+                            title="Resetar Banco Completo (ADMIN)"
+                        >
+                            <Trash2 className="w-3.5 h-3.5 transition-transform group-hover:scale-110" />
+                            RESETAR BANCO COMPLETO
+                        </button>
+                    ) : (
+                        <button
+                            onClick={() => setShowClearMineConfirm(true)}
+                            className="group flex items-center gap-2 px-4 py-2 rounded-full border border-orange-100 bg-white text-orange-600 text-[11px] font-semibold tracking-wide shadow-sm hover:bg-orange-50 hover:border-orange-200 transition-all duration-200 active:scale-95"
+                            title="Limpar Apenas Meus Dados"
+                        >
+                            <Trash2 className="w-3.5 h-3.5 transition-transform group-hover:scale-110" />
+                            LIMPAR MEUS DADOS
+                        </button>
+                    )}
                 </div>
 
                 <div className="p-8 md:p-12">
@@ -313,20 +389,22 @@ export default function HistoryImportPage() {
             <ConfirmDialog
                 isOpen={showResetConfirm}
                 onClose={() => setShowResetConfirm(false)}
-                onConfirm={async () => {
-                    try {
-                        setIsLoading(true);
-                        const res = await fetch('/api/registros/import', { method: 'DELETE' });
-                        if (res.ok) {
-                            setStatus('success');
-                            setMessage('Banco de dados limpo com sucesso!');
-                            setPreviewData([]);
-                            onConfirm = { handleReset }
-                            title = "⚠️ RESETAR BANCO DE DADOS?"
-                            description = "Esta ação apagará TODOS os registros de TODOS os usuários permanentemente. Esta operação NÃO pode ser desfeita e requer permissão de ADMINISTRADOR."
-                            confirmText = "Resetar Tudo"
-                            cancelText = "Cancelar"
-                                />
+                onConfirm={handleReset}
+                title="⚠️ RESETAR BANCO DE DADOS?"
+                description="Esta ação apagará TODOS os registros de TODOS os usuários permanentemente. Esta operação NÃO pode ser desfeita e requer permissão de ADMINISTRADOR."
+                confirmText="Resetar Tudo"
+                cancelText="Cancelar"
+            />
+
+            <ConfirmDialog
+                isOpen={showClearMineConfirm}
+                onClose={() => setShowClearMineConfirm(false)}
+                onConfirm={handleClearMyData}
+                title="Limpar Meus Dados?"
+                description="Esta ação apagará APENAS os seus registros. Os dados de outros usuários não serão afetados. Esta operação não pode ser desfeita."
+                confirmText="Limpar Meus Dados"
+                cancelText="Cancelar"
+            />
         </div>
     )
 }
