@@ -52,10 +52,11 @@ WITH CHECK (
   )
 );
 
--- DELETE: Only admins can delete registros
-CREATE POLICY "registros_delete_admin_only" 
+-- DELETE: Users can delete own registros OR admins can delete all
+CREATE POLICY "registros_delete_own_or_admin" 
 ON registros FOR DELETE
 USING (
+  auth.uid() = user_id OR
   EXISTS (
     SELECT 1 FROM profiles 
     WHERE id = auth.uid() 

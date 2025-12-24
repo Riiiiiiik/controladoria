@@ -1,25 +1,31 @@
+```typescript
 'use client'
 
 import { useState } from 'react'
 import { createClient } from '@/lib/supabase/client'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
+import { deleteRegistro } from '@/actions/delete-registro'
 import { Check, X, Edit2, Trash2, Loader2 } from 'lucide-react'
 
 interface RegistroActionsProps {
-    registro: any
+    registroId: string
+    registroStatus: string
 }
 
-export default function RegistroActions({ registro }: RegistroActionsProps) {
+export default function RegistroActions({ registroId, registroStatus }: RegistroActionsProps) {
     const router = useRouter()
     const supabase = createClient()
-    const [loading, setLoading] = useState(false)
+    const [loading, setLoading] = useState(false) // For status updates
+    const [isDeleting, setIsDeleting] = useState(false) // For delete action
+    const [showConfirm, setShowConfirm] = useState(false) // For delete confirmation
 
     const handleUpdateStatus = async (status: string) => {
         setLoading(true)
         const { error } = await supabase
             .from('registros')
             .update({ status })
-            .eq('id', registro.id)
+            .eq('id', registroId)
 
         if (!error) {
             router.refresh()
@@ -28,25 +34,21 @@ export default function RegistroActions({ registro }: RegistroActionsProps) {
     }
 
     const handleDelete = async () => {
-        if (!confirm('Tem certeza que deseja excluir este registro?')) return
+        setIsDeleting(true)
+        const result = await deleteRegistro(registroId)
 
-        setLoading(true)
-        const { error } = await supabase
-            .from('registros')
-            .delete()
-            .eq('id', registro.id)
-
-        if (!error) {
-            router.refresh()
+        if (result.error) {
+            alert(result.error)
+            setIsDeleting(false)
+            setShowConfirm(false)
         } else {
-            alert('Erro ao excluir')
+            router.refresh()
         }
-        setLoading(false)
     }
 
     return (
         <div className="flex items-center justify-center gap-1 opacity-100 transition-opacity">
-            {registro.status === 'Pendente' && (
+            {registroStatus === 'Pendente' && (
                 <>
                     <button
                         onClick={() => handleUpdateStatus('Aprovado')}
@@ -68,19 +70,6 @@ export default function RegistroActions({ registro }: RegistroActionsProps) {
                 </>
             )}
 
-            <button
-                onClick={() => router.push(`/dashboard/registros/${registro.id}/edit`)}
-                className="p-1.5 text-indigo-400 hover:text-indigo-300 hover:bg-indigo-400/10 rounded-lg transition-colors"
-                title="Editar"
-            >
-                <Edit2 className="h-4 w-4" />
-            </button>
-
-            <button
-                onClick={handleDelete}
-                disabled={loading}
-                className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-colors"
-                title="Excluir"
             >
                 <Trash2 className="h-4 w-4" />
             </button>
