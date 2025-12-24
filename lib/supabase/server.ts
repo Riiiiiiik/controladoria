@@ -19,7 +19,7 @@ export const createClient = async () => {
                             cookieStore.set(name, value, {
                                 ...options,
                                 httpOnly: true,  // ✅ Prevents JavaScript access (XSS protection)
-                                secure: process.env.NODE_ENV === 'production', // ✅ HTTPS only in production
+                                secure: true,    // ✅ HTTPS only (modern browsers accept on localhost too)
                                 sameSite: 'lax', // ✅ CSRF protection
                                 path: '/',       // ✅ Available across entire site
                             })
