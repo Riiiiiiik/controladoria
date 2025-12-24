@@ -200,7 +200,6 @@ export default function RegistroForm({ initialData, onSuccess, onCancel }: Regis
                 onSuccess()
             } else {
                 router.push('/dashboard')
-                router.refresh()
             }
         }
     }

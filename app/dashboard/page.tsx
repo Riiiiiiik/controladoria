@@ -5,8 +5,6 @@ import AdminUserSelector from '@/components/dashboard/admin-user-selector'
 import Link from 'next/link'
 import { Plus, ArrowLeft } from 'lucide-react'
 
-export const dynamic = 'force-dynamic'
-
 interface DashboardPageProps {
     searchParams: Promise<{ [key: string]: string | string[] | undefined }>
 }
