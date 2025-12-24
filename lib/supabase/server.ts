@@ -14,9 +14,16 @@ export const createClient = async () => {
                 },
                 setAll(cookiesToSet) {
                     try {
-                        cookiesToSet.forEach(({ name, value, options }) =>
-                            cookieStore.set(name, value, options)
-                        )
+                        cookiesToSet.forEach(({ name, value, options }) => {
+                            // SECURITY: Add critical cookie flags
+                            cookieStore.set(name, value, {
+                                ...options,
+                                httpOnly: true,  // ✅ Prevents JavaScript access (XSS protection)
+                                secure: process.env.NODE_ENV === 'production', // ✅ HTTPS only in production
+                                sameSite: 'lax', // ✅ CSRF protection
+                                path: '/',       // ✅ Available across entire site
+                            })
+                        })
                     } catch {
                         // The `setAll` method was called from a Server Component.
                         // This can be ignored if you have middleware refreshing
