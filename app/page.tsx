@@ -1,6 +1,3 @@
-import { createClient } from '@/lib/supabase/server'
-import { redirect } from 'next/navigation'
-
 export default function Home() {
   return (
     <div className="flex min-h-screen flex-col items-center justify-center p-24">
