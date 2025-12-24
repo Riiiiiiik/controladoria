@@ -36,7 +36,7 @@ export async function createRegistro(data: any) {
     // SECURITY: Validate input
     const validated = RegistroSchema.safeParse(data)
     if (!validated.success) {
-        return { error: 'Dados inválidos: ' + validated.error.errors.map(e => e.message).join(', ') }
+        return { error: 'Dados inválidos: ' + validated.error.issues.map((e: any) => e.message).join(', ') }
     }
 
     const supabase = createAdminClient()
@@ -68,7 +68,7 @@ export async function updateRegistro(id: string, data: any) {
     // SECURITY: Validate input (partial schema for updates)
     const validated = RegistroSchema.partial().safeParse(data)
     if (!validated.success) {
-        return { error: 'Dados inválidos: ' + validated.error.errors.map(e => e.message).join(', ') }
+        return { error: 'Dados inválidos: ' + validated.error.issues.map((e: any) => e.message).join(', ') }
     }
 
     // SECURITY: Check if user is admin

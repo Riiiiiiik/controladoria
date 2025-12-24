@@ -18,7 +18,7 @@ setInterval(() => {
 export function middleware(request: NextRequest) {
     // Only apply rate limiting to API routes
     if (request.nextUrl.pathname.startsWith('/api/')) {
-        const ip = request.ip || request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
+        const ip = request.headers.get('x-forwarded-for') || request.headers.get('x-real-ip') || 'unknown'
         const now = Date.now()
         const limit = rateLimit.get(ip)
 
