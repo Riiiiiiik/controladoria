@@ -39,10 +39,10 @@ export async function createRegistro(data: any) {
         return { error: 'Dados inválidos: ' + validated.error.issues.map((e: any) => e.message).join(', ') }
     }
 
-    const supabase = createAdminClient()
-
+    // SECURITY: Use RLS-enabled client instead of admin bypass
+    // RLS policy ensures user can only insert with their own user_id
     try {
-        const { error } = await supabase
+        const { error } = await supabaseUser
             .from('registros')
             .insert([{ ...validated.data, user_id: user.id }])
 

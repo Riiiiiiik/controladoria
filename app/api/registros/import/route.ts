@@ -2,6 +2,7 @@
 import { createAdminClient } from '@/lib/supabase/admin'
 import { createClient } from '@/lib/supabase/server'
 import { NextResponse } from 'next/server'
+import { logAdminAction, AuditActions } from '@/lib/audit-log'
 
 // Helper to standardise date to YYYY-MM-DD
 function parseDate(dateStr: any): string | null {
@@ -53,8 +54,12 @@ export async function DELETE(request: Request) {
     // Now safe to delete - user is authenticated admin
     const supabaseAdmin = createAdminClient()
 
-    // Safety check: ensure only admins can do this, or just rely on dev context?
-    // ideally check auth, but for "reset" requested by user in this context, just do it.
+    // SECURITY: Log this critical action before executing
+    await logAdminAction({
+        userId: user.id,
+        action: AuditActions.DELETE_ALL_REGISTROS,
+        details: { timestamp: new Date().toISOString() }
+    })
 
     const { error } = await supabaseAdmin
         .from('registros')
