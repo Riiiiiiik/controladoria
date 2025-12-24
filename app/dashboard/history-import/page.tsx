@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Papa from 'papaparse'
 import * as XLSX from 'xlsx'
@@ -391,7 +391,7 @@ export default function HistoryImportPage() {
                 onClose={() => setShowResetConfirm(false)}
                 onConfirm={handleReset}
                 title="⚠️ RESETAR BANCO DE DADOS?"
-                description="Esta ação apagará TODOS os registros de TODOS os usuários permanentemente. Esta operação NÃO pode ser desfeita e requer permissão de ADMINISTRADOR."
+                message="Esta ação apagará TODOS os registros de TODOS os usuários permanentemente. Esta operação NÃO pode ser desfeita e requer permissão de ADMINISTRADOR."
                 confirmText="Resetar Tudo"
                 cancelText="Cancelar"
             />
@@ -401,7 +401,7 @@ export default function HistoryImportPage() {
                 onClose={() => setShowClearMineConfirm(false)}
                 onConfirm={handleClearMyData}
                 title="Limpar Meus Dados?"
-                description="Esta ação apagará APENAS os seus registros. Os dados de outros usuários não serão afetados. Esta operação não pode ser desfeita."
+                message="Esta ação apagará APENAS os seus registros. Os dados de outros usuários não serão afetados. Esta operação não pode ser desfeita."
                 confirmText="Limpar Meus Dados"
                 cancelText="Cancelar"
             />
