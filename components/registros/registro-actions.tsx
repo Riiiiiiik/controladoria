@@ -1,4 +1,3 @@
-```typescript
 'use client'
 
 import { useState } from 'react'
@@ -71,8 +70,8 @@ export default function RegistroActions({ registroId, registroStatus }: Registro
             )}
 
             >
-                <Trash2 className="h-4 w-4" />
-            </button>
-        </div>
+            <Trash2 className="h-4 w-4" />
+        </button>
+        </div >
     )
 }
