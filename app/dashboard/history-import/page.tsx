@@ -321,22 +321,12 @@ export default function HistoryImportPage() {
                             setStatus('success');
                             setMessage('Banco de dados limpo com sucesso!');
                             setPreviewData([]);
-                            setFile(null);
-                            router.refresh();
-                        } else {
-                            setStatus('error');
-                            setMessage('Erro ao limpar banco de dados.');
-                        }
-                    } finally {
-                        setIsLoading(false);
-                    }
-                }}
-                title="Resetar Banco de Dados?"
-                message="Esta ação apagará TODOS os registros do banco de dados permanentemente. Esta operação não pode ser desfeita."
-                confirmText="Resetar"
-                cancelText="Cancelar"
-                variant="danger"
-            />
+                            onConfirm = { handleReset }
+                            title = "⚠️ RESETAR BANCO DE DADOS?"
+                            description = "Esta ação apagará TODOS os registros de TODOS os usuários permanentemente. Esta operação NÃO pode ser desfeita e requer permissão de ADMINISTRADOR."
+                            confirmText = "Resetar Tudo"
+                            cancelText = "Cancelar"
+                                />
         </div>
     )
 }
