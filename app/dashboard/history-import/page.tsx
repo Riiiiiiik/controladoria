@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import Papa from 'papaparse'
 import * as XLSX from 'xlsx'
 import { Upload, FileUp, AlertCircle, CheckCircle, Loader2, Trash2 } from 'lucide-react'
+import ConfirmDialog from '@/components/ui/confirm-dialog'
 
 export default function HistoryImportPage() {
     const router = useRouter()
@@ -14,6 +15,7 @@ export default function HistoryImportPage() {
     const [isParsing, setIsParsing] = useState(false)
     const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle')
     const [message, setMessage] = useState('')
+    const [showResetConfirm, setShowResetConfirm] = useState(false)
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (e.target.files && e.target.files[0]) {
@@ -182,23 +184,7 @@ export default function HistoryImportPage() {
                         </div>
                     </div>
                     <button
-                        onClick={async () => {
-                            if (!confirm('Tem certeza? Isso apagará TODOS os registros do banco de dados.')) return;
-                            try {
-                                setIsLoading(true);
-                                const res = await fetch('/api/registros/import', { method: 'DELETE' });
-                                if (res.ok) {
-                                    alert('Banco de dados limpo!');
-                                    setPreviewData([]);
-                                    setFile(null);
-                                    router.refresh();
-                                } else {
-                                    alert('Erro ao limpar.');
-                                }
-                            } finally {
-                                setIsLoading(false);
-                            }
-                        }}
+                        onClick={() => setShowResetConfirm(true)}
                         className="group flex items-center gap-2 px-4 py-2 rounded-full border border-red-100 bg-white text-red-600 text-[11px] font-semibold tracking-wide shadow-sm hover:bg-red-50 hover:border-red-200 transition-all duration-200 active:scale-95"
                         title="Resetar Banco de Dados"
                     >
@@ -322,6 +308,35 @@ export default function HistoryImportPage() {
                     <p className="text-sm font-semibold text-gray-900">Encoding UTF-8</p>
                 </div>
             </div>
+
+            {/* Confirmation Dialog */}
+            <ConfirmDialog
+                isOpen={showResetConfirm}
+                onClose={() => setShowResetConfirm(false)}
+                onConfirm={async () => {
+                    try {
+                        setIsLoading(true);
+                        const res = await fetch('/api/registros/import', { method: 'DELETE' });
+                        if (res.ok) {
+                            setStatus('success');
+                            setMessage('Banco de dados limpo com sucesso!');
+                            setPreviewData([]);
+                            setFile(null);
+                            router.refresh();
+                        } else {
+                            setStatus('error');
+                            setMessage('Erro ao limpar banco de dados.');
+                        }
+                    } finally {
+                        setIsLoading(false);
+                    }
+                }}
+                title="Resetar Banco de Dados?"
+                message="Esta ação apagará TODOS os registros do banco de dados permanentemente. Esta operação não pode ser desfeita."
+                confirmText="Resetar"
+                cancelText="Cancelar"
+                variant="danger"
+            />
         </div>
     )
 }
