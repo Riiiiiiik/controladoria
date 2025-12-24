@@ -27,6 +27,13 @@ export default function LoginPage() {
         setLoading(true)
         setError(null)
 
+        // Validate email domain
+        if (!formData.email.endsWith('@audaxcapitalsa.com.br')) {
+            setError('Apenas e-mails corporativos @audaxcapitalsa.com.br são permitidos.')
+            setLoading(false)
+            return
+        }
+
         const { error } = await supabase.auth.signInWithPassword({
             email: formData.email,
             password: formData.password,
@@ -104,7 +111,7 @@ export default function LoginPage() {
                                         name="email"
                                         value={formData.email}
                                         onChange={handleChange}
-                                        placeholder="nome@empresa.com"
+                                        placeholder="nome@audaxcapitalsa.com.br"
                                         required
                                         className="w-full h-12 px-4 rounded-xl bg-gray-100/50 text-gray-900 text-[15px] placeholder-gray-400 border-0 ring-0 focus:ring-2 focus:ring-[#0071e3] transition-all duration-200 ease-out outline-none"
                                     />
